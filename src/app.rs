@@ -1,6 +1,5 @@
 use std::error::Error;
 use serde::Deserialize;
-use std::{thread, time::Duration};
 use csv::Reader;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
@@ -81,9 +80,9 @@ impl eframe::App for TemplateApp {
             if ui.button("Increment").clicked() {
                 *value += 1.0;
             }
-            
+
             // attempting to load a CSV here
-            let mut rdr = Reader::from_path("0136362995083_format00002_77870600.csv").expect("Unable to open");
+            let mut rdr = Reader::from_path("test.csv").expect("Unable to open");
 
             egui::Grid::new("some_unique_id").striped(true).show(ui, |ui| {
                 for result in rdr.records() {
