@@ -81,50 +81,19 @@ impl eframe::App for TemplateApp {
             if ui.button("Increment").clicked() {
                 *value += 1.0;
             }
-
-            // egui::Grid::new("some_unique_id").show(ui, |ui| {
-            //     ui.label("First row, first column");
-            //     ui.label("First row, second column");
-            //     ui.end_row();
             
-            //     ui.label("Second row, first column");
-            //     ui.label("Second row, second column");
-            //     ui.label("Second row, third column");
-            //     ui.end_row();
-            
-            //     ui.horizontal(|ui| { ui.label("Same"); ui.label("cell"); });
-            //     ui.label("Third row, second column");
-            //     ui.end_row();
-            // });
-
-
-
-
             // attempting to load a CSV here
-            let mut rdr = Reader::from_path("0136362995083_format00002_77870600.csv").expect("Unable to open");;
-            for result in rdr.records() {
-                let record = result;
-                println!("{:?}", record);
-            }
-            //thread::sleep(Duration::from_millis(400000));
-
-
+            let mut rdr = Reader::from_path("0136362995083_format00002_77870600.csv").expect("Unable to open");
 
             egui::Grid::new("some_unique_id").striped(true).show(ui, |ui| {
-                ui.label("First row, first column");
-                ui.label("First row, second column");
-                ui.end_row();
-            
-                ui.label("Second row, first column");
-                ui.label("Second row, second column");
-                ui.label("Second row, third column");
-                ui.end_row();
-            
-                ui.horizontal(|ui| { ui.label("Same"); ui.label("cell"); });
-                ui.label("Third row, second column");
-                ui.end_row();
+                for result in rdr.records() {
+                    let result_record = result.unwrap();
+                    for cell in result_record.iter() {
+                        ui.label(cell);
+                    }
+                    ui.end_row();
+                }
             });
-
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
