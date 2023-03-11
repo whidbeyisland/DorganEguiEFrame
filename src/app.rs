@@ -1,6 +1,10 @@
 use std::error::Error;
 use serde::Deserialize;
 use csv::Reader;
+use rust_data_viz_utils::add_one;
+use rust_data_viz_utils::GridFromCSV;
+use rust_data_viz_utils::add_two;
+use rust_data_viz_utils::add_three;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -27,11 +31,11 @@ impl Default for TemplateApp {
 impl TemplateApp {
     /// Called once before the first frame.
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        // This is also where you can customized the look at feel of egui using
-        // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
+        // This is also where you can customize the look at feel of egui using
+        // 'cc.egui_ctx.set_visuals' and 'cc.egui_ctx.set_fonts'.
 
         // Load previous app state (if any).
-        // Note that you must enable the `persistence` feature for this to work.
+        // Note that you must enable the 'persistence' feature for this to work.
         if let Some(storage) = cc.storage {
             return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
         }
@@ -47,13 +51,13 @@ impl eframe::App for TemplateApp {
     }
 
     /// Called each time the UI needs repainting, which may be many times per second.
-    /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
+    /// Put your widgets into a 'SidePanel', 'TopPanel', 'CentralPanel', 'Window' or 'Area'.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { label, value } = self;
 
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
-        // Tip: a good default choice is to just keep the `CentralPanel`.
+        // Tip: a good default choice is to just keep the 'CentralPanel'.
         // For inspiration and more examples, go to https://emilk.github.io/egui
 
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
@@ -70,6 +74,7 @@ impl eframe::App for TemplateApp {
 
         egui::SidePanel::left("side_panel").show(ctx, |ui| {
             ui.heading("Side Panel");
+            println!("{:?}", add_one(5));
 
             ui.horizontal(|ui| {
                 ui.label("Write something: ");
@@ -81,10 +86,12 @@ impl eframe::App for TemplateApp {
                 *value += 1.0;
             }
 
-            // attempting to load a CSV here
+            // attempting to load my own CSV class
+            //rust_data_viz_utils::GridFromCSV("test.csv").show();
+
             let mut rdr = Reader::from_path("test.csv").expect("Unable to open");
 
-            egui::Grid::new("some_unique_id").striped(true).show(ui, |ui| {
+            rust_data_viz_utils::GridFromCSV("test.csv").show(ui, |ui| {
                 for result in rdr.records() {
                     let result_record = result.unwrap();
                     for cell in result_record.iter() {
@@ -93,6 +100,19 @@ impl eframe::App for TemplateApp {
                     ui.end_row();
                 }
             });
+
+            // // attempting to load a CSV here
+            // let mut rdr = Reader::from_path("test.csv").expect("Unable to open");
+
+            // egui::Grid::new("some_unique_id").striped(true).show(ui, |ui| {
+            //     for result in rdr.records() {
+            //         let result_record = result.unwrap();
+            //         for cell in result_record.iter() {
+            //             ui.label(cell);
+            //         }
+            //         ui.end_row();
+            //     }
+            // });
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
